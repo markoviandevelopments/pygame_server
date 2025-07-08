@@ -23,6 +23,8 @@ print(f"Server listening on {host}:{port}")
 # List to keep track of client connections
 clients = []
 
+client_coords = []
+
 try:
     while True:
         # Check for new connections or readable sockets
@@ -35,6 +37,7 @@ try:
                     client_socket, client_address = server_socket.accept()
                     client_socket.setblocking(False)
                     clients.append(client_socket)
+                    client_coord.append([random.randint(100, 700), random.randint(100, 700)])
                     print(f"New connection from {client_address}")
                 except socket.error as e:
                     print(f"Error accepting connection: {e}")
@@ -59,11 +62,11 @@ try:
                         sock.close()
 
         # Send random number to all connected clients
-        for client in writable[:]:  # Use copy to avoid modification during iteration
+        for i, client in enumerate(writable[:]):  # Use copy to avoid modification during iteration
             try:
                 random_number = random.randint(1, 100)
-                client.send(str(random_number).encode())
-                print(f"Sent to {client.getpeername()}: {random_number}")
+                client.send(str(client_coords[i]).encode())
+                print(f"Sent to {client.getpeername()}: {random_number}  CLients: {clients}")
             except socket.error as e:
                 if e.errno not in [errno.EAGAIN, errno.EWOULDBLOCK]:
                     try:
