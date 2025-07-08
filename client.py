@@ -105,7 +105,7 @@ try:
                     print(f"Send error: {e}")
                     break
 
-        time.sleep(1)  # Control the rate of sending numbers
+        time.sleep(.1)  # Control the rate of sending numbers
 
 except KeyboardInterrupt:
     print("\nDisconnecting from server...")

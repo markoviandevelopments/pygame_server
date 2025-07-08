@@ -85,7 +85,7 @@ try:
                     clients.remove(client)
                     client.close()
 
-        time.sleep(1)  # Control the rate of sending numbers
+        time.sleep(.1)  # Control the rate of sending numbers
 
 except KeyboardInterrupt:
     print("\nShutting down server...")
