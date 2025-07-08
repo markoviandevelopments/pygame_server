@@ -15,7 +15,7 @@ client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 client_socket.setblocking(False)
 
 # Define host and port
-host = '192.168.1.126'
+host = '172.20.10.4'
 port = 12346
 
 coords = [[0, 0]]
