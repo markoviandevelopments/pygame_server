@@ -3,6 +3,12 @@ import random
 import time
 import select
 import errno
+import pygame
+import ast
+
+pygame.init()
+
+window = pygame.display.set_mode((800, 800))
 
 # Create a TCP/IP socket
 client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -10,7 +16,9 @@ client_socket.setblocking(False)
 
 # Define host and port
 host = '192.168.1.126'
-port = 12345
+port = 12346
+
+coords = [[0, 0]]
 
 # Attempt to connect with retry for non-blocking
 connected = False
@@ -44,7 +52,12 @@ while not connected:
             exit(1)
 
 try:
-    while True:
+    running = True
+    while running:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+        
         # Check for readable or writable socket
         readable, writable, _ = select.select([client_socket], [client_socket], [], 1.0)
 
@@ -53,8 +66,14 @@ try:
             try:
                 data = client_socket.recv(1024)
                 if data:
-                    received_number = data.decode()
-                    print(f"Received from server: {received_number}")
+                    coords = ast.literal_eval(data.decode())
+                    print(f"Received from server: {coords} Number of clients: {len(coords[1])}")
+                    window.fill((0,0,0))
+                    for i in range(len(coords[1])):
+                        x = coords[1][i][0]
+                        y = coords[1][i][1]
+                        pygame.draw.rect(window, (255, 0, 0), (x, y, 50, 50))
+                    pygame.display.flip()
                 else:
                     print("Server disconnected")
                     break
@@ -66,7 +85,7 @@ try:
         # Send random number to server
         if writable:
             try:
-                random_number = random.randint(1, 100)
+                random_number = random.randint(0, 4)
                 client_socket.send(str(random_number).encode())
                 print(f"Sent to server: {random_number}")
             except socket.error as e:
@@ -78,5 +97,8 @@ try:
 
 except KeyboardInterrupt:
     print("\nDisconnecting from server...")
+    pygame.quit()
 finally:
     client_socket.close()
+    pygame.quit()
+pygame.quit()

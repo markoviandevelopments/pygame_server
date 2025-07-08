@@ -10,7 +10,7 @@ server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 
 # Define host and port
 host = '0.0.0.0'
-port = 12345
+port = 12346
 
 # Bind the socket to the address
 server_socket.bind((host, port))
@@ -37,7 +37,7 @@ try:
                     client_socket, client_address = server_socket.accept()
                     client_socket.setblocking(False)
                     clients.append(client_socket)
-                    client_coord.append([random.randint(100, 700), random.randint(100, 700)])
+                    client_coords.append([random.randint(100, 700), random.randint(100, 700)])
                     print(f"New connection from {client_address}")
                 except socket.error as e:
                     print(f"Error accepting connection: {e}")
@@ -65,7 +65,7 @@ try:
         for i, client in enumerate(writable[:]):  # Use copy to avoid modification during iteration
             try:
                 random_number = random.randint(1, 100)
-                client.send(str(client_coords[i]).encode())
+                client.send(str([i, client_coords]).encode())
                 print(f"Sent to {client.getpeername()}: {random_number}  CLients: {clients}")
             except socket.error as e:
                 if e.errno not in [errno.EAGAIN, errno.EWOULDBLOCK]:
