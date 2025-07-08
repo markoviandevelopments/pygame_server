@@ -75,25 +75,28 @@ try:
         readable, writable, _ = select.select([client_socket], [client_socket], [], 1.0)
 
         # Handle receiving data
-        if readable:
-            try:
-                data = client_socket.recv(1024)
-                if data:
-                    coords = ast.literal_eval(data.decode())
-                    print(f"Received from server: {coords} Number of clients: {len(coords[1])}")
-                    window.fill((0,0,0))
-                    for i in range(len(coords[1])):
-                        x = coords[1][i][0]
-                        y = coords[1][i][1]
-                        pygame.draw.rect(window, (255, 0, 0), (x, y, 50, 50))
-                    pygame.display.flip()
-                else:
-                    print("Server disconnected")
-                    break
-            except socket.error as e:
-                if e.errno not in [errno.EAGAIN, errno.EWOULDBLOCK]:
-                    print(f"Receive error: {e}")
-                    break
+        try:
+            if readable:
+                try:
+                    data = client_socket.recv(1024)
+                    if data:
+                        coords = ast.literal_eval(data.decode())
+                        print(f"Received from server: {coords} Number of clients: {len(coords[1])}")
+                        window.fill((0,0,0))
+                        for i in range(len(coords[1])):
+                            x = coords[1][i][0]
+                            y = coords[1][i][1]
+                            pygame.draw.rect(window, (255, 0, 0), (x, y, 50, 50))
+                        pygame.display.flip()
+                    else:
+                        print("Server disconnected")
+                        break
+                except socket.error as e:
+                    if e.errno not in [errno.EAGAIN, errno.EWOULDBLOCK]:
+                        print(f"Receive error: {e}")
+                        break
+        except:
+            print("oops")
 
         # Send number to server
         if writable:

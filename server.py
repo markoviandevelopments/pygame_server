@@ -43,33 +43,36 @@ try:
                     print(f"Error accepting connection: {e}")
 
         # Handle readable client sockets
-        for i, sock in enumerate(readable):
-            if sock in clients:
-                try:
-                    data = sock.recv(1024)
-                    if data:
-                        received_number = data.decode()
-                        print(f"Received from {sock.getpeername()}: {received_number}")
-                        move = int(received_number)
-                        if move == 1:
-                            client_coords[i][0] += 50
-                        elif move == 2:
-                            client_coords[i][1] -= 50
-                        elif move == 3:
-                            client_coords[i][0] -= 50
-                        elif move == 4:
-                            client_coords[i][1] += 50
+        try:
+            for i, sock in enumerate(readable):
+                if sock in clients:
+                    try:
+                        data = sock.recv(1024)
+                        if data:
+                            received_number = data.decode()
+                            print(f"Received from {sock.getpeername()}: {received_number}")
+                            move = int(received_number)
+                            if move == 1:
+                                client_coords[i][0] += 50
+                            elif move == 2:
+                                client_coords[i][1] -= 50
+                            elif move == 3:
+                                client_coords[i][0] -= 50
+                            elif move == 4:
+                                client_coords[i][1] += 50
 
-                    else:
-                        # Client disconnected
-                        print(f"Client {sock.getpeername()} disconnected")
-                        clients.remove(sock)
-                        sock.close()
-                except socket.error as e:
-                    if e.errno not in [errno.EAGAIN, errno.EWOULDBLOCK]:
-                        print(f"Client {sock.getpeername()} error: {e}")
-                        clients.remove(sock)
-                        sock.close()
+                        else:
+                            # Client disconnected
+                            print(f"Client {sock.getpeername()} disconnected")
+                            clients.remove(sock)
+                            sock.close()
+                    except socket.error as e:
+                        if e.errno not in [errno.EAGAIN, errno.EWOULDBLOCK]:
+                            print(f"Client {sock.getpeername()} error: {e}")
+                            clients.remove(sock)
+                            sock.close()
+        except:
+            print("oops")
 
         # Send random number to all connected clients
         for i, client in enumerate(writable[:]):  # Use copy to avoid modification during iteration
