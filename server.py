@@ -43,13 +43,23 @@ try:
                     print(f"Error accepting connection: {e}")
 
         # Handle readable client sockets
-        for sock in readable:
+        for i, sock in enumerate(readable):
             if sock in clients:
                 try:
                     data = sock.recv(1024)
                     if data:
                         received_number = data.decode()
                         print(f"Received from {sock.getpeername()}: {received_number}")
+                        move = int(received_number)
+                        if move == 1:
+                            client_coords[i][0] += 50
+                        elif move == 2:
+                            client_coords[i][1] -= 50
+                        elif move == 3:
+                            client_coords[i][0] -= 50
+                        elif move == 4:
+                            client_coords[i][1] += 50
+
                     else:
                         # Client disconnected
                         print(f"Client {sock.getpeername()} disconnected")
@@ -64,9 +74,8 @@ try:
         # Send random number to all connected clients
         for i, client in enumerate(writable[:]):  # Use copy to avoid modification during iteration
             try:
-                random_number = random.randint(1, 100)
                 client.send(str([i, client_coords]).encode())
-                print(f"Sent to {client.getpeername()}: {random_number}  CLients: {clients}")
+                print(f"Sent to {client.getpeername()}:  {str([i, client_coords])} CLients: {clients}")
             except socket.error as e:
                 if e.errno not in [errno.EAGAIN, errno.EWOULDBLOCK]:
                     try:

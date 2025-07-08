@@ -20,6 +20,7 @@ port = 12346
 
 coords = [[0, 0]]
 
+
 # Attempt to connect with retry for non-blocking
 connected = False
 while not connected:
@@ -58,6 +59,18 @@ try:
             if event.type == pygame.QUIT:
                 running = False
         
+        move = 0
+
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_d]:
+            move = 1
+        if keys[pygame.K_w]:
+            move = 2
+        if keys[pygame.K_a]:
+            move = 3
+        if keys[pygame.K_s]:
+            move = 4
+        
         # Check for readable or writable socket
         readable, writable, _ = select.select([client_socket], [client_socket], [], 1.0)
 
@@ -82,12 +95,11 @@ try:
                     print(f"Receive error: {e}")
                     break
 
-        # Send random number to server
+        # Send number to server
         if writable:
             try:
-                random_number = random.randint(0, 4)
-                client_socket.send(str(random_number).encode())
-                print(f"Sent to server: {random_number}")
+                client_socket.send(str(move).encode())
+                print(f"Sent to server: {move}")
             except socket.error as e:
                 if e.errno not in [errno.EAGAIN, errno.EWOULDBLOCK]:
                     print(f"Send error: {e}")
