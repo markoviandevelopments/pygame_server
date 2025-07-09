@@ -13,22 +13,24 @@ server_address = (host, port)
 
 class Dog():
     def __init__(self):
-        self.sound = "bark"
-        self.breed = "German Shepard"
-        self.walk = "Hey yous. Eyyyy - I'm walking 'ere!!!"
-        self.x = 0
-        self.y = 1
-
+        self.sound = "bow-wow"
+        self.breed = "Eastern Pomeranian"
+        self.walk = "*truts over to nearest coffee shop*"
+        self.x = 13
+        self.y = 17
 
 dog = Dog()
 
 
 # String to send
-message = pickle.dumps(dog)
+
 
 # Send the string (encode to bytes)
-client_socket.sendto(message, server_address)
-print(f"Sent to {server_address}: {message}")
+while True:
+    dog.sound = input()
+    message = pickle.dumps(dog)
+    client_socket.sendto(message, server_address)
+    print(f"Sent to {server_address}: {message}")
 
 # Close socket
 client_socket.close()

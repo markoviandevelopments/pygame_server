@@ -13,11 +13,11 @@ print(f"UDP server listening on {host}:{port}")
 
 class Dog():
     def __init__(self):
-        self.sound = "bark"
-        self.breed = "German Shepard"
-        self.walk = "Hey yous. Eyyyy - I'm walking 'ere!!!"
-        self.x = 0
-        self.y = 1
+        self.sound = "bow-wow"
+        self.breed = "Eastern Pomeranian"
+        self.walk = "*truts over to nearest coffee shop*"
+        self.x = 13
+        self.y = 17
 
 dog = Dog()
 
