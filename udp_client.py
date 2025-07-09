@@ -5,17 +5,19 @@ import pickle
 client_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
 # Server address
-host = '172.20.10.1'
-port = 12349
+host = '172.20.10.2'
+port = 12343
 server_address = (host, port)
 
 
 
 class Dog():
     def __init__(self):
-        Dog.sound = "bark"
-        Dog.breed = "German Shepard"
-        Dog.walk = "Hello Folks. I am walking!!!"
+        self.sound = "bark"
+        self.breed = "German Shepard"
+        self.walk = "Hey yous. Eyyyy - I'm walking 'ere!!!"
+        self.x = 0
+        self.y = 1
 
 
 dog = Dog()

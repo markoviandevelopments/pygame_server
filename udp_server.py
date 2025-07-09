@@ -6,25 +6,26 @@ server_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
 # Bind to address and port
 host = '0.0.0.0'
-port = 12349
+port = 12343
 server_socket.bind((host, port))
 
+print(f"UDP server listening on {host}:{port}")
 
 class Dog():
     def __init__(self):
-        Dog.sound = "bark"
-        Dog.breed = "German Shepard"
-        Dog.walk = "Hello Folks. I am walking!!!"
+        self.sound = "bark"
+        self.breed = "German Shepard"
+        self.walk = "Hey yous. Eyyyy - I'm walking 'ere!!!"
+        self.x = 0
+        self.y = 1
 
-
-
-print(f"UDP server listening on {host}:{port}")
+dog = Dog()
 
 # Receive data
 while True:
     data, addr = server_socket.recvfrom(1024)  # Buffer size of 1024 bytes
     dog = pickle.loads(data)  # Decode bytes to string
-    print(f"Received from {addr}: {dog.walk}")
+    print(f"Received from {addr}: {dog.__dict__}")
 
 # Close socket
 server_socket.close()
