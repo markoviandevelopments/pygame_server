@@ -24,7 +24,7 @@ print(f"UDP server listening on {host}:{port}")
 while True:
     data, addr = server_socket.recvfrom(1024)  # Buffer size of 1024 bytes
     dog = pickle.loads(data)  # Decode bytes to string
-    print(f"Received from {addr}: {dog.bark}")
+    print(f"Received from {addr}: {dog.walk}")
 
 # Close socket
 server_socket.close()
