@@ -6,7 +6,7 @@ client_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
 # Server address
 host = '172.20.10.1'
-port = 12347
+port = 12349
 server_address = (host, port)
 
 

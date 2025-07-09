@@ -6,7 +6,7 @@ server_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
 # Bind to address and port
 host = '0.0.0.0'
-port = 12347
+port = 12349
 server_socket.bind((host, port))
 
 
