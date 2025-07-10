@@ -2,11 +2,12 @@ import socket
 import pickle
 import threading
 import random
+import time
 
 # Client configuration
 HOST = '192.168.1.126'  # Server address
-SERVER_PORT = 12343   # Server port
-CLIENT_PORT = 12346   # Client port
+SERVER_PORT = 12373   # Server port
+CLIENT_PORT = 12376   # Client port
 BUFFER_SIZE = 1024
 
 # Create UDP socket
@@ -17,10 +18,7 @@ client_socket.bind((HOST, CLIENT_PORT))
 class Dog:
     def __init__(self):
         self.sound = "bow-wow"
-        self.breed = "Eastern Pomeranian"
-        self.walk = "*truts over to nearest coffee shop*"
-        self.x = 13
-        self.y = 17
+
 
 # List of possible dog sounds
 DOG_SOUNDS = ["woof", "arf", "yap", "grr", "bow-wow", "ruff"]
@@ -47,7 +45,7 @@ def send_messages():
     while True:
         try:
             # Randomly change the dog's sound
-            message = input("Enter a dog sound (or 'exit' to quit, or press Enter for random sound): ").strip()
+            message = 0
             if not message:  # If Enter is pressed, choose random sound
                 dog.sound = random.choice(DOG_SOUNDS)
             else:
@@ -62,7 +60,9 @@ def send_messages():
         except Exception as e:
             print(f"Error sending: {e}")
             break
+        time.sleep(1)
     client_socket.close()
+
 
 def main():
     print(f"Starting UDP client on {HOST}:{CLIENT_PORT}")
