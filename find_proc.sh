@@ -2,7 +2,7 @@
 
 # Script to find and close ports 12333 and 12336 by killing associated processes
 
-PORTS=(12333 12336)
+PORTS=(12333 12336 9000)
 
 for PORT in "${PORTS[@]}"; do
     # Find PIDs of processes listening on the port using lsof
