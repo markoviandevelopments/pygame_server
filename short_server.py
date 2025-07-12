@@ -20,7 +20,7 @@ def comm():
         o = pickle.loads(d)
         o.number += 1
         server_socket.sendto(pickle.dumps(o),a)
-        print(f"{o.__dict__}")
+        #print(f"{o.__dict__}")
         num = o.number
 
 
