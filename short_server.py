@@ -17,7 +17,6 @@ server_socket.bind(('',9000))
 ob = O()
 
 def comm():
-    global num
     global ob
     while 1:
         d,a = server_socket.recvfrom(99)
@@ -29,7 +28,6 @@ def comm():
 
 
 def main():
-    global num
     global ob
     while 1:
         print(ob.number)
