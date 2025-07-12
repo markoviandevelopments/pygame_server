@@ -6,32 +6,51 @@ import pygame
 import time
 import copy
 
-BUFFER_SIZE = 1024
+BUFFER_SIZE = 256
 
 class O:
     def __init__(self,n=0):
         self.number=n
         self.x = 100
         self.y = 100
+        self.moved = False
 
 client_socket = socket.socket(2,2)
-a=('192.168.1.126',9000)
-o=O()
+a = ('192.168.1.126',9000)
+o = O()
 
 def comm():
     global o
+    print("Client comm thread started")
+    try:
+        # Initial send to break deadlock
+        o.number += 1
+        serialized = pickle.dumps(o)
+        client_socket.sendto(serialized, a)
+        print(f"Client sent initial {len(serialized)} bytes: {o.__dict__} at {time.time()}")
+    except Exception as e:
+        print(f"Client initial send error: {e}")
     while 1:
-        # try:
-        #     if not o:
-        #         ob = copy.deepcopy(o)
-        # except:
-        #     print("O is empty or being altered")
-        d, a = client_socket.recvfrom(BUFFER_SIZE)
-        ob = pickle.loads(d)
-        ob.number += 1
-        client_socket.sendto(pickle.dumps(ob),a)
-        o = copy.deepcopy(ob)
-        # print(f"{o.__dict__}")
+        try:
+            d, addr = client_socket.recvfrom(BUFFER_SIZE)
+            print(f"Client received {len(d)} bytes from {addr} at {time.time()}")
+            ob = pickle.loads(d)
+            try:
+                if o:
+                    if o.moved:
+                        o.moved = False
+                        ob = copy.deepcopy(o)
+
+            except:
+                print("ob error/not changed")
+            print(f"Client loaded: {ob.__dict__}")
+            ob.number += 1
+            o = copy.deepcopy(ob)  # Update global
+            serialized = pickle.dumps(ob)
+            client_socket.sendto(serialized, a)
+            print(f"Client sent {len(serialized)} bytes: {ob.__dict__} at {time.time()}")
+        except Exception as e:
+            print(f"Client error: {e}")
         time.sleep(.01)
 
 def main():
@@ -49,17 +68,21 @@ def main():
         keys = pygame.key.get_pressed()
         if keys[pygame.K_w]:
             o.y -= 10
+            o.moved = True
         if keys[pygame.K_a]:
             o.x -= 10
+            o.moved = True
         if keys[pygame.K_s]:
             o.y += 10
+            o.moved = True
         if keys[pygame.K_d]:
             o.x += 10
+            o.moved = True
 
         window.fill((0,0,0))
         pygame.draw.rect(window, (255, 255, 0), (o.x, o.y, 50, 50))
         pygame.display.flip()
-        print(o.number)
+        print(o.__dict__)
         time.sleep(.1)
 
     pygame.quit()
