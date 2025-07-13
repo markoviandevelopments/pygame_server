@@ -19,6 +19,7 @@ class O:
         self.moved = False
 
 num = 0
+a = None
 
 server_socket = socket.socket(2,2)
 server_socket.bind(('',9000))
@@ -31,7 +32,7 @@ def recv():
     global ob
     print("Server comm thread started, waiting for data...")
     server_socket.settimeout(0.01)
-    a = None
+    
     while 1:
         try:
             d, a = server_socket.recvfrom(BUFFER_SIZE)
@@ -54,7 +55,7 @@ def send():
     global ob
     print("Server comm thread started, waiting for data...")
     server_socket.settimeout(0.01)
-    a = None
+    
     # d,a = server_socket.recvfrom(BUFFER_SIZE)
     while 1:
         print(ob.__dict__)
@@ -67,7 +68,6 @@ def send():
             serialized = pickle.dumps(o)
             server_socket.sendto(serialized, a)
             print(f"Server sent {len(serialized)} bytes back: {o.__dict__} at {time.time()}")
-            ob.moved = False
             ob.number = o.number
             
         except Exception as e:
