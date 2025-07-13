@@ -39,14 +39,13 @@ def recv():
             d, a = server_socket.recvfrom(BUFFER_SIZE)
             print(f"Server received {len(d)} bytes from {a} at {time.time()}")
             o = pickle.loads(d)
-            if o.number > ob.number:
-                x_server = ob.x_server
-                y_server = ob.y_server
-                ob = copy.deepcopy(o)
-                ob.x_server = x_server
-                ob.y_server = y_server
-                ob.moved = False
-                print(f"Server loaded: {o.__dict__}")
+            x_server = ob.x_server
+            y_server = ob.y_server
+            ob = copy.deepcopy(o)
+            ob.x_server = x_server
+            ob.y_server = y_server
+            ob.moved = False
+            print(f"Server loaded: {o.__dict__}")
         except Exception as e:
             print(f"Server error: {e}")
         time.sleep(0.1)
