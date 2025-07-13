@@ -30,9 +30,10 @@ ob = O()
 
 def recv():
     global ob
+    global a
     print("Server comm thread started, waiting for data...")
     server_socket.settimeout(0.01)
-    
+    a = None
     while 1:
         try:
             d, a = server_socket.recvfrom(BUFFER_SIZE)
@@ -53,6 +54,7 @@ def recv():
 
 def send():
     global ob
+    global a
     print("Server comm thread started, waiting for data...")
     server_socket.settimeout(0.01)
     
