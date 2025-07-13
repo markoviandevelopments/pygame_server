@@ -12,8 +12,10 @@ BUFFER_SIZE = 256
 class O:
     def __init__(self,n=0):
         self.number=n
-        self.x = 100
-        self.y = 100
+        self.x_server = 100
+        self.y_server = 100
+        self.x_client = 200
+        self.y_client = 200
         self.moved = False
 
 client_socket = socket.socket(2,2)
@@ -75,22 +77,23 @@ def main():
 
         keys = pygame.key.get_pressed()
         if keys[pygame.K_w]:
-            o.y -= 10
+            o.y_client -= 10
             o.moved = True
         elif keys[pygame.K_a]:
-            o.x -= 10
+            o.x_client -= 10
             o.moved = True
         elif keys[pygame.K_s]:
-            o.y += 10
+            o.y_client += 10
             o.moved = True
         elif keys[pygame.K_d]:
-            o.x += 10
+            o.x_client += 10
             o.moved = True
         else:
             o.moved = False
 
         window.fill((0,0,0))
-        pygame.draw.rect(window, (255, 255, 0), (o.x, o.y, 50, 50))
+        pygame.draw.rect(window, (255, 255, 0), (o.x_client, o.y_client, 50, 50))
+        pygame.draw.rect(window, (255, 0, 0), (o.x_server, o.y_server, 50, 50))
         pygame.display.flip()
         #print(o.__dict__)
         time.sleep(.1)
