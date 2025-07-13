@@ -25,7 +25,32 @@ server_socket.bind(('',9000))
 
 ob = O()
 
-def comm():
+
+
+def recv():
+    global ob
+    print("Server comm thread started, waiting for data...")
+    server_socket.settimeout(0.01)
+    a = None
+    while 1:
+        try:
+            d, a = server_socket.recvfrom(BUFFER_SIZE)
+            print(f"Server received {len(d)} bytes from {a} at {time.time()}")
+            o = pickle.loads(d)
+            if o.number > ob.number:
+                x_server = ob.x_server
+                y_server = ob.y_server
+                ob = copy.deepcopy(o)
+                ob.x_server = x_server
+                ob.y_server = y_server
+                ob.moved = False
+                print(f"Server loaded: {o.__dict__}")
+        except Exception as e:
+            print(f"Server error: {e}")
+        time.sleep(0.1)
+        
+
+def send():
     global ob
     print("Server comm thread started, waiting for data...")
     server_socket.settimeout(0.01)
@@ -34,28 +59,16 @@ def comm():
     while 1:
         print(ob.__dict__)
         try:
-            if ob.moved:
-                if a is None: 
-                    time.sleep(0.1)
-                    continue
-                o = copy.deepcopy(ob)
-                o.number += 1
-                serialized = pickle.dumps(o)
-                server_socket.sendto(serialized, a)
-                print(f"Server sent {len(serialized)} bytes back: {o.__dict__} at {time.time()}")
-                ob.moved = False
-                ob.number = o.number
-            else:
-                try:
-                    d, a = server_socket.recvfrom(BUFFER_SIZE)
-                    print(f"Server received {len(d)} bytes from {a} at {time.time()}")
-                    o = pickle.loads(d)
-                    if o.number > ob.number:
-                        ob = copy.deepcopy(o)
-                        ob.moved = False
-                        print(f"Server loaded: {o.__dict__}")
-                except socket.timeout:
-                    pass
+            if a is None: 
+                time.sleep(0.1)
+                continue
+            o = copy.deepcopy(ob)
+            o.number += 1
+            serialized = pickle.dumps(o)
+            server_socket.sendto(serialized, a)
+            print(f"Server sent {len(serialized)} bytes back: {o.__dict__} at {time.time()}")
+            ob.moved = False
+            ob.number = o.number
             
         except Exception as e:
             print(f"Server error: {e}")
@@ -99,12 +112,15 @@ def main():
     
     pygame.quit()
 
-comm_thread = threading.Thread(target=comm)
+send_thread = threading.Thread(target=send)
+recv_thread = threading.Thread(target=recv)
 main_thread = threading.Thread(target=main)
 
-comm_thread.start()
+send_thread.start()
+recv_thread.start()
 main_thread.start()
 
-comm_thread.join()
+send_thread.join()
+recv_thread.join()
 main_thread.join()
 
