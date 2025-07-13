@@ -5,6 +5,7 @@ import threading
 import pygame
 import time
 import copy
+import random
 
 BUFFER_SIZE = 256
 
@@ -22,6 +23,7 @@ o = O()
 def comm():
     global o
     print("Client comm thread started")
+    client_socket.settimeout(0.1)
     try:
         # Initial send to break deadlock
         o.number += 1
@@ -30,28 +32,34 @@ def comm():
         print(f"Client sent initial {len(serialized)} bytes: {o.__dict__} at {time.time()}")
     except Exception as e:
         print(f"Client initial send error: {e}")
+    
     while 1:
+        print(o.__dict__)
         try:
-            d, addr = client_socket.recvfrom(BUFFER_SIZE)
-            print(f"Client received {len(d)} bytes from {addr} at {time.time()}")
-            ob = pickle.loads(d)
-            try:
-                if o:
-                    if o.moved:
-                        o.moved = False
-                        ob = copy.deepcopy(o)
+            if o.moved:
+                print("Moved")
+                ob = copy.deepcopy(o)
+                ob.number += 1
+                serialized = pickle.dumps(ob)
+                client_socket.sendto(serialized, a)
+                print(f"Client sent {len(serialized)} bytes: {ob.__dict__} at {time.time()}")
+                o.moved = False
+                o.number = ob.number
+            else:
+                try:
+                    d, addr = client_socket.recvfrom(BUFFER_SIZE)
+                    print(f"Client received {len(d)} bytes from {addr} at {time.time()}")
+                    ob = pickle.loads(d)
+                    if ob.number > o.number:
+                            o = copy.deepcopy(ob)
+                            o.moved = False
+                            print(f"Client loaded: {ob.__dict__}")
+                except socket.timeout:
+                    pass
 
-            except:
-                print("ob error/not changed")
-            print(f"Client loaded: {ob.__dict__}")
-            ob.number += 1
-            o = copy.deepcopy(ob)  # Update global
-            serialized = pickle.dumps(ob)
-            client_socket.sendto(serialized, a)
-            print(f"Client sent {len(serialized)} bytes: {ob.__dict__} at {time.time()}")
         except Exception as e:
             print(f"Client error: {e}")
-        time.sleep(.01)
+        time.sleep(.1)
 
 def main():
     global o
@@ -69,20 +77,22 @@ def main():
         if keys[pygame.K_w]:
             o.y -= 10
             o.moved = True
-        if keys[pygame.K_a]:
+        elif keys[pygame.K_a]:
             o.x -= 10
             o.moved = True
-        if keys[pygame.K_s]:
+        elif keys[pygame.K_s]:
             o.y += 10
             o.moved = True
-        if keys[pygame.K_d]:
+        elif keys[pygame.K_d]:
             o.x += 10
             o.moved = True
+        else:
+            o.moved = False
 
         window.fill((0,0,0))
         pygame.draw.rect(window, (255, 255, 0), (o.x, o.y, 50, 50))
         pygame.display.flip()
-        print(o.__dict__)
+        #print(o.__dict__)
         time.sleep(.1)
 
     pygame.quit()
