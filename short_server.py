@@ -81,7 +81,8 @@ def main():
 
     pygame.init()
     window = pygame.display.set_mode((800, 800))
-
+    window.fill((0,0,0))
+    
     running = True
     while running:
         for event in pygame.event.get():
@@ -104,9 +105,9 @@ def main():
         else:
             ob.moved = False
         
-        window.fill((0,0,0))
-        pygame.draw.rect(window, (255, 0, 0), (ob.x_server, ob.y_server, 50, 50))
-        pygame.draw.rect(window, (255, 255, 0), (ob.x_client, ob.y_client, 50, 50))
+        
+        pygame.draw.rect(window, (255, 0, 0), (ob.x_server, ob.y_server, 5, 5))
+        pygame.draw.rect(window, (255, 255, 0), (ob.x_client, ob.y_client, 5, 5))
         pygame.display.flip()
         #print(ob.__dict__)
         time.sleep(.1)
